@@ -71,7 +71,7 @@ class fuck_import(console_term):
                     file_code_buf = open(self.path + '/' + file_code_name[0], 'r', encoding="utf-8").read() + '\n'
                     file_code_name[1] = len(file_code_buf.split('\n'))
                     self.code += file_code_buf
-                    print(str(self.error_promt) + str(file_code_name[0]))
+                    self.print(str(self.error_promt) + str(file_code_name[0]), 0)
 
                 except:
                     self.print(str(self.error_promt) + 'File opening error (' + str(file_code_name[0]) + ')', 2)
