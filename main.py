@@ -85,8 +85,10 @@ engine_run = True
 # заставляет закрыть программу
 def exit():
     global engine_run
+
+    console_term.print('EXIT')
+
     engine_run = False
-    #sys.exit(0)
     os._exit(0)
 
 #------------------------------------------------------------------------------#
@@ -321,16 +323,15 @@ else:
             pyglet.app.run()
 
         except Exception as e:
+            console_term.print(str(e), 3)
+
             exc_type, exc_obj, exc_tb = sys.exc_info()
             line_error = traceback.extract_tb(exc_tb)[-1][1] - 1
-
             lines = 0
             for i in range(len(fuck_import.files)):
                 if (lines > line_error):
-                    console_term.print(str(e), 3)
                     console_term.print(str(fuck_import.files[i-1][0]) + ':' + str(lines - line_error) + ' >> ' + str(CODE.split('\n')[line_error]), 3)
                     break;
 
                 lines += fuck_import.files[i][1]
-
             exit()

@@ -1,12 +1,3 @@
-version = 'TANK MASTERS:CLASSIC 0.9.0'
-
-window.set_caption(version_engine + ' | ' + version)
-
-import math, random
-import numpy as np
-import collision
-import copy
-
 pyglet.gl.glLineWidth(3)
 pyglet.gl.glEnable (GL_LINE_SMOOTH)
 pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
@@ -45,15 +36,6 @@ def on_input():
     engine_settings.on_draw_bool           = True
     engine_settings.on_update_bool         = True
 
-def menu_cursor():
-    image = pyglet.image.load('img/cursor/cursor_menu.png')
-    texture = image.get_texture()
-    texture.width = settings.height//50
-    texture.height = settings.height//50
-
-    cursor = pyglet.window.ImageMouseCursor(texture, 9, 9)
-    window.set_mouse_cursor(cursor)
-
 def show_cursor():
     window.set_mouse_visible(True)
 
@@ -61,7 +43,5 @@ def hide_cursor():
     window.set_mouse_visible(False)
 
 def main():
-    if FIRST_START:
-        first_name()
-    else:
-        menu()
+    clear_display()
+    add_display(text_label(settings.width//2, settings.height//2, 'HELLO WORLD', load_font=True, font='pixel.ttf', size=settings.height//20, anchor_x='center', color = (180, 180, 180, 255)))
