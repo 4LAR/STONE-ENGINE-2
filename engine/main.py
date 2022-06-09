@@ -57,8 +57,13 @@ import screeninfo
 # для обработки ошибок
 import traceback
 
+# для хэширования
+import hashlib
+
+# изменение цвета символов в консоли
+import termcolor
+
 # импортирование своих библиотек
-sys.path.append('libs')
 from get_time import *
 from console import *
 from args import *

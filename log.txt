@@ -1,13 +1,5 @@
-[18:26:52|09-06-22] IMPORT: lib.py
-[18:26:52|09-06-22] IMPORT: libs/console.py
-[18:26:52|09-06-22] IMPORT: main.py
-[18:26:52|09-06-22] IMPORT: logo.py
-[18:26:53|09-06-22] OTHER ADD: <__main__.Console object at 0x00000243DEF75040>
-[18:26:53|09-06-22] DISPLAY ADD: <__main__.skip object at 0x00000243EED83250>
-[18:26:53|09-06-22] DISPLAY ADD: <__main__.label object at 0x00000243F0C04610>
-[18:26:53|09-06-22] DISPLAY ADD: <__main__.image_label object at 0x00000243F0C10130>
-[18:26:53|09-06-22] DISPLAY ADD: <__main__.breathing_label object at 0x00000243F0C10700>
-[18:26:55|09-06-22] DISPLAY ADD: <__main__.text_label object at 0x00000243EED83370>
-[18:26:55|09-06-22] DISPLAY ADD: <__main__.breathing_label object at 0x00000243EED83820>
-[18:26:55|09-06-22] DISPLAY CLEAR
-[18:26:55|09-06-22] DISPLAY ADD: <__main__.text_label object at 0x00000243DEF5B7C0>
+[19:57:12|09-06-22] IMPORT: lib.py
+[19:57:12|09-06-22] IMPORT: libs/console.py
+[19:57:12|09-06-22] IMPORT: main.py
+[19:57:12|09-06-22] IMPORT: logo.py
+[19:57:12|09-06-22] IMPORT: Code built successfully (objects.pkl)
