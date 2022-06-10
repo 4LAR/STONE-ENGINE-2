@@ -1,5 +1,0 @@
-[19:57:12|09-06-22] IMPORT: lib.py
-[19:57:12|09-06-22] IMPORT: libs/console.py
-[19:57:12|09-06-22] IMPORT: main.py
-[19:57:12|09-06-22] IMPORT: logo.py
-[19:57:12|09-06-22] IMPORT: Code built successfully (objects.pkl)
