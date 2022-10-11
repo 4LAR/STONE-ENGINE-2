@@ -24,6 +24,7 @@ from pyglet.window import key, mouse
 # многопоточность
 import multiprocessing
 import threading
+import asyncio
 
 # обработка изображений
 import PIL
@@ -67,6 +68,11 @@ import termcolor
 # для открытия ссылок
 import webbrowser
 
+#
+import cpuinfo
+import psutil
+import platform
+
 # импортирование своих библиотек
 from get_time import *
 from console import *
@@ -75,6 +81,7 @@ from fuckimport import *
 from pickle_func import *
 from engine_settings import *
 from settings import *
+from machine_info import *
 from fps_monitor import *
 from check_exception import *
 
@@ -83,6 +90,10 @@ console_term = console_term(game_args.args.log)
 fuck_import = fuck_import()
 engine_settings = Engine_settings()
 settings = settings()
+machine_info = machine_info()
+
+if game_args.args.log:
+    machine_info.get(True)
 
 for conf in settings.pyglet_options:
     pyglet.options[conf] = settings.pyglet_options[conf]
@@ -335,7 +346,7 @@ else:
             exec(CODE)
             if len(game_args.args.command) > 0:
                 exec(game_args.args.command)
-                
+
             if not game_args.args.nowindow:
                 pyglet.clock.schedule_interval(update, 1/settings.fps)
                 pyglet.app.run()
