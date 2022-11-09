@@ -1,6 +1,30 @@
 
 BUFFERSIZE = 512
 
+def load_cursor(image, scale = 1, raw_image=False, return_cursor=False):
+    if settings.game_options['game_cursor']:
+        if not raw_image:
+            image = pyglet.image.load('assets/img/%s' % image)
+
+        texture = image.get_texture()
+        texture.width = texture.width * scale
+        texture.height = texture.height * scale
+
+        cursor = pyglet.window.ImageMouseCursor(texture, 0, texture.height)
+        if return_cursor:
+            return cursor
+        else:
+            window.set_mouse_cursor(cursor)
+
+    else:
+        cursor = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
+        if return_cursor:
+            return cursor
+        else:
+            window.set_mouse_cursor(cursor)
+
+
+
 def save_dict(dict, name):
     json.dump(dict, open(str(name) + '.json','w'))
 
@@ -44,6 +68,12 @@ def PIL_to_pyglet(image_pil, scale=1, anchor_bool = False):
     image_pyglet.scale = scale
     return image_pyglet
 
+def PIL_to_pyglet_imageData(image_pil, scale=1):
+    raw_image = image_pil.tobytes()
+    image_pyglet = pyglet.image.ImageData(image_pil.width, image_pil.height, 'RGBA', raw_image, pitch=-image_pil.width * 4)
+    image_pyglet.scale = scale
+    return image_pyglet
+
 def save_obj(obj, name ):
     with open(name + '.pkl', 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
@@ -55,10 +85,11 @@ def load_obj(name ):
 def lerp(start, end, a):
     return (1-a) * start + a * end
 
-def draw_line(pos_from, pos_before):
+def draw_line(pos_from, pos_before, color=(255, 255, 255)):
     points = [pos_from[0], pos_from[1], pos_before[0], pos_before[1]]
     pyglet.graphics.draw(2, pyglet.gl.GL_LINE_LOOP,
-        ('v2i', points)
+        ('v2i', points),
+        ('c3B', color * int(len(points) / 2))
     )
 
 def draw_poly(poligon):
@@ -175,7 +206,7 @@ class text_cursor():
         self.length = length
 
         self.cursor_text_size = settings.height//50
-        self.cursor_text = text_label(settings.width//6, settings.height - settings.height//15, 'text', load_font=True, font='pixel.ttf', size=self.cursor_text_size, anchor_x='left', color = (180, 180, 180, 255))
+        self.cursor_text = text_label(settings.width//6, settings.height - settings.height//15, 'text', load_font=True, font='urod.ttf', size=self.cursor_text_size, anchor_x='left', color = (180, 180, 180, 255))
         self.cursor_text.label.text = text
 
     def draw(self, x=0, y=0):
@@ -207,7 +238,7 @@ class text_cursor():
         self.cursor_text.draw()
 
 class timer():
-    def __init__(self, delay, func, arg=None):
+    def __init__(self, delay, func=None, arg=None):
         self.time = time.perf_counter() + delay
         self.func = func
         self.arg = arg
@@ -281,7 +312,7 @@ class read_key_image():
         self.cursor_poligon.pos.x = x
         self.cursor_poligon.pos.y = y
         if collision.collide(self.image_poligon, self.cursor_poligon):
-            sound.play('upgrade.wav')
+            sound.play('select.wav')
             if not self.selected:
                 self.selected = True
             else:
@@ -292,7 +323,7 @@ class read_key_image():
         self.cursor_poligon.pos.y = y
         if collision.collide(self.image_poligon, self.cursor_poligon):
             if not self.hover:
-                sound.play('select.wav')
+                sound.play('hover.wav')
             self.hover = True
         else:
             self.hover = False
@@ -398,7 +429,7 @@ class slider_image():
         self.cursor_poligon.pos.y = y
         if collision.collide(self.image_poligon, self.cursor_poligon):
             if not self.hover:
-                sound.play('select.wav')
+                sound.play('hover.wav')
             self.hover = True
         else:
             self.hover = False
@@ -407,7 +438,7 @@ class slider_image():
         self.cursor_poligon.pos.x = x
         self.cursor_poligon.pos.y = y
         if collision.collide(self.image_poligon, self.cursor_poligon):
-            sound.play('upgrade.wav')
+            sound.play('select.wav')
             self.update_state(x)
 
     def on_mouse_drag(self, x, y, dx, dy, buttons, modifiers):
@@ -465,7 +496,7 @@ class input_label_image():
         self.text_obj = input_label(
             x + text_indent + self.text_button.label.content_width + text_input_indent, y + self.image_obj.sprite.height/35,
             self.image_obj.sprite.width - (text_indent + self.text_button.label.content_width + text_input_indent), self.image_obj.sprite.height,
-            size=int(self.scale * 5.5), font='pixel.ttf', text=pre_text, color_text=color_text,
+            size=int(self.scale * 5.5), font='urod.ttf', text=pre_text, color_text=color_text,
             color_background=(0, 0, 0, 0), color_background_selected=(0, 0, 0, 0)
         )
 
@@ -492,7 +523,7 @@ class input_label_image():
             self.cursor_poligon.pos.y = y
             if collision.collide(self.image_poligon, self.cursor_poligon):
                 if not self.hover and not self.selected:
-                    sound.play('select.wav')
+                    sound.play('hover.wav')
                 self.hover = True
             else:
                 self.hover = False
@@ -505,7 +536,7 @@ class input_label_image():
                 engine_settings.on_text_bool = True
                 self.selected = True
                 self.text_obj.selected = True
-                sound.play('upgrade.wav')
+                sound.play('select.wav')
                 return True
             else:
                 self.selected = False
@@ -642,7 +673,7 @@ class input_label():
         self.text_label.draw()
 
 class text_label(): # класс для прорисовки текста
-    def __init__(self, x, y, text, size=18, color=(255, 255, 255, 255), anchor_x='left', anchor_y='center', load_font=False, font='pixel.ttf', shadow=False, color_shadow=(255, 255, 255, 255), shadow_size=20, type_shadow=0, rotation=0, multiline=False, use=True):
+    def __init__(self, x, y, text, size=18, color=(255, 255, 255, 255), anchor_x='left', anchor_y='center', load_font=False, font='urod.ttf', shadow=False, color_shadow=(255, 255, 255, 255), shadow_size=20, type_shadow=0, rotation=0, multiline=False, use=True):
         self.use = use
 
         if load_font: # использовать ли свой шрифт
@@ -721,6 +752,8 @@ class image_label(): # класс для проприсвки картинки
         #print(self.rotation)
 
     def __init__(self, image, x, y, scale_x = 1, scale_y = 1, scale = 1, visible=True, rotation=0, alpha=255, pixel=False, center=False, black_mask=False, alpha_mask=0, batch=None, group=None, no_image=False, shadow=False, color_shadow=(0, 0, 0, 128)):
+        self.image_name = image
+
         self.x = x
         self.y = y
         self.size_x = scale_y
@@ -847,7 +880,7 @@ class breathing_label(): # класс для прорисовки 4х уголь
         self.rec.draw()
 
 class image_flag():
-    def __init__(self, x, y, image, image_flag, scale=1, rotation=0, alpha=255, center=False, image_selected_flag=None, image_selected=None, poligon=False, function_bool = False, function=None, arg=None, text=None, text_color=(0, 0, 0, 0), text_indent=0, font='default.ttf', shadow=False, color_shadow=(0, 0, 0, 128), use=True, text_scale=5.5, text_size_y=1.6):
+    def __init__(self, x, y, image, image_flag, scale=1, rotation=0, alpha=255, center=False, image_selected_flag=None, image_selected=None, poligon=False, function_bool = False, function=None, arg=None, text=None, text_color=(0, 0, 0, 0), text_indent=0, font='default.ttf', shadow=False, color_shadow=(0, 0, 0, 128), use=True, text_scale=5.5, text_size_y=1.6, flag=False):
         self.use = use
 
         self.x = x
@@ -883,7 +916,7 @@ class image_flag():
         self.poligon = poligon
 
         self.selected = False
-        self.flag = False
+        self.flag = flag
 
         self.shadow = shadow
         self.color_shadow = color_shadow
@@ -933,7 +966,7 @@ class image_flag():
             self.cursor_poligon.pos.x = x
             self.cursor_poligon.pos.y = y
             if collision.collide(self.image_poligon, self.cursor_poligon):
-                sound.play('upgrade.wav')
+                sound.play('select.wav')
 
                 if self.flag:
                     self.flag = False
@@ -957,7 +990,7 @@ class image_flag():
             if collision.collide(self.image_poligon, self.cursor_poligon):
                 if not self.selected:
                     self.selected = True
-                    sound.play('select.wav')
+                    sound.play('hover.wav')
             else:
                 self.selected = False
 
@@ -1012,7 +1045,7 @@ class image_flag():
 
 
 class image_button():
-    def __init__(self, x, y, image, scale=1, rotation=0, alpha=255, center=False, function=None, arg=None, image_selected=None, poligon=False, text=None, text_color=(180, 180, 180, 255), font='pixel.ttf', text_indent=0, shadow=False, color_shadow=(0, 0, 0, 128), draw_info=False, alight_info='rt', text_info='', use=True, text_scale=5.5, text_size_y=1.6):
+    def __init__(self, x, y, image, scale=1, rotation=0, alpha=255, center=False, function=None, arg=None, image_selected=None, poligon=False, text=None, text_color=(180, 180, 180, 255), font='urod.ttf', text_indent=0, shadow=False, color_shadow=(0, 0, 0, 128), draw_info=False, alight_info='rt', text_info='', use=True, text_scale=5.5, text_size_y=1.6):
         self.use = use
 
         self.draw_info = draw_info
@@ -1083,7 +1116,7 @@ class image_button():
             self.cursor_poligon.pos.x = x
             self.cursor_poligon.pos.y = y
             if collision.collide(self.image_poligon, self.cursor_poligon):
-                sound.play('upgrade.wav')
+                sound.play('select.wav')
                 if self.arg == None:
                     self.function()
                 else:
@@ -1097,10 +1130,12 @@ class image_button():
             self.cursor_poligon.pos.y = y
             if collision.collide(self.image_poligon, self.cursor_poligon):
                 if not self.selected:
-                    sound.play('select.wav')
+                    sound.play('hover.wav')
                 self.selected = True
             else:
                 self.selected = False
+
+            return self.selected
 
     def update_pos(self, x_pol, y_pol, x_im, y_im):
         self.image_poligon.pos.x = x_pol

@@ -3,6 +3,15 @@
 #
 #
 
+# bg color
+# HEX: #3A3945
+# RGB: (58, 57, 69)
+
+# text color
+# HEX: #B6B3A6
+# RGB: (182, 179, 166)
+# font: urod.ttf
+
 import time
 
 window.set_icon(pyglet.image.load('assets/img/stone_engine.png'))
@@ -10,7 +19,6 @@ window.set_icon(pyglet.image.load('assets/img/stone_engine.png'))
 class skip():
 	def __init__(self, type=0):
 		self.type = type
-		pass
 
 	def on_key_press(self, symbol, modifiers):
 		if symbol == pyglet.window.key.ESCAPE:
@@ -22,32 +30,18 @@ class skip():
 				main()
 		return True
 
-# логотип 100LAR STUDIO
-def logo_stop():
-    add_display(breathing_label(0, 0, settings.width, settings.height, (0, 0, 0), 0, delay=0.04, function=text_logo, for_from=0, for_before=255, tick=5))
-
-def logo_text():
-
-    add_display(text_label(settings.width//2, settings.height//4, '100LAR STUDIO', load_font=True, font='pixel.ttf', size=settings.height//10, anchor_x='center', color = (180, 180, 180, 255)))
-    add_display(breathing_label(0, settings.height//6, settings.width, settings.height//6, (0, 0, 0), 0, delay=0.04, function=logo_stop))
-
-#if user_game_settings.draw_logo:
-hide_cursor()
-add_display(skip())
-add_display(label(settings.width, settings.height, settings.width, settings.height, (0, 0, 0)))
-add_display(image_label('logo_studio.png', settings.width//2.5, settings.height//3, scale=settings.height//180, pixel=True))
-add_display(breathing_label(0, 0, settings.width, settings.height, (0, 0, 0), 0, delay=0.04, function=logo_text))
-
-#else:
-#	main()
-
-# предупреждающий текст
 def add_timer_text_logo():
-	add_display(timer(
-		2,
-		None,
-		'add_display(breathing_label(0, 0, settings.width, settings.height, (0, 0, 0), 0, delay=0.04, function=main, for_from=0, for_before=255, tick=5))'
-	))
+	add_display(breathing_label(0, 0, settings.width, settings.height, (0, 0, 0), 0, delay=0.04, function=main, for_from=0, for_before=255, tick=5))
+
+if settings.game_options['draw_logo']:
+	hide_cursor()
+	add_display(skip())
+	add_display(label(0, 0, settings.width, settings.height, (58, 57, 69)))
+	add_display(image_label('logo_studio.png', settings.width/2, settings.height/2, scale=settings.height/100, pixel=True, center=True))
+	add_display(breathing_label(0, 0, settings.width, settings.height, (58, 57, 69), 0, delay=0.04, function=add_timer_text_logo))
+
+else:
+	main()
 
 def text_logo():
 	clear_display()
